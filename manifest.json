@@ -1,0 +1,44 @@
+{
+    "manifest_version": 3,
+    "name": "Job Application Tracker",
+    "version": "0.1.0",
+    "description": "Save job applications (date, role, link) from any site and view them in a local dashboard.",
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
+    "permissions": [
+        "storage",
+        "activeTab",
+        "scripting",
+        "contextMenus",
+        "tabs",
+        "notifications"
+    ],
+    "host_permissions": ["<all_urls>"],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_title": "Job Tracker",
+        "default_popup": "popup.html"
+    },
+    "options_page": "dashboard.html",
+    "commands": {
+        "save_job_shortcut": {
+            "suggested_key": {
+                "default": "Ctrl+Shift+S",
+                "mac": "Command+Shift+S"
+            },
+            "description": "Save current page as a job application"
+        }
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["contentScript.js"],
+            "run_at": "document_idle"
+        }
+    ]
+}

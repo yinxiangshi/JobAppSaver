@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Job Tracker Dashboard</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="container">
+<header class="header">
+<h1>Job Applications</h1>
+<div class="actions">
+<button id="exportCsv">Export CSV</button>
+<button id="exportJson">Export JSON</button>
+<input id="search" placeholder="Search title/company/location..." />
+<select id="statusFilter">
+<option value="">All</option>
+<option>applied</option>
+<option>interview</option>
+<option>offer</option>
+<option>rejected</option>
+</select>
+</div>
+</header>
+
+
+<table id="table">
+<thead>
+<tr>
+<th>Date</th>
+<th>Title</th>
+<th>Company</th>
+<th>Location</th>
+<th>Status</th>
+<th>Link</th>
+<th>Notes</th>
+<th></th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+<script type="module" src="dashboard.js"></script>
+</body>
+</html>
