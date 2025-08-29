@@ -15,16 +15,6 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     notify(`Saved: ${pageInfo.title || 'Untitled role'}`);
 });
 
-chrome.commands.onCommand.addListener(async (command) => {
-    if (command === "save_job_shortcut") {
-        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-        if (!tab) return;
-        const pageInfo = await extractPageInfo(tab.id);
-        await saveJob(pageInfo);
-        notify(`Saved: ${pageInfo.title || 'Untitled role'}`);
-    }
-});
-
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg && msg.type === 'SAVE_JOB_FROM_CONTENT') {
         saveJob(msg.payload).then(() => {
@@ -75,10 +65,187 @@ async function extractPageInfo(tabId) {
         const [{ result } = {}] = await chrome.scripting.executeScript({
             target: { tabId },
             func: () => {
+                function findCompanyName() {
+                    const strategies = [
+                        () => {
+                            const selectors = [
+                                '[data-company]',
+                                '[itemprop="hiringOrganization"]',
+                                '.company',
+                                '.jobs-company',
+                                '.posting-company',
+                                '[data-testid="company-name"]',
+                                '[data-qa="CompanyName"]',
+                                '.company-name',
+                                '.employer-name',
+                                '.hiring-company'
+                            ];
+                            
+                            for (const selector of selectors) {
+                                const element = document.querySelector(selector);
+                                if (element && element.textContent?.trim()) {
+                                    return element.textContent.trim();
+                                }
+                            }
+                            return null;
+                        },
+                        
+                        () => {
+                            const title = document.title;
+                            const patterns = [
+                                /at\s+([^|]+?)(?:\s*[-|]|\s*$)/i,
+                                /^([^|]+?)\s*[-|]\s*/i,
+                                /^([^|]+?)\s*:\s*/i
+                            ];
+                            
+                            for (const pattern of patterns) {
+                                const match = title.match(pattern);
+                                if (match && match[1] && match[1].length > 2) {
+                                    const company = match[1].trim();
+                                    if (!/job|career|position|apply|hiring/i.test(company)) {
+                                        return company;
+                                    }
+                                }
+                            }
+                            return null;
+                        },
+                        
+                        () => {
+                            const hostname = location.hostname;
+                            const urlPatterns = [
+                                /^([^.]+)\.(?:jobs|careers|workday|greenhouse|lever)\./i,
+                                /^([^.]+)\.(?:com|org|net)\./i
+                            ];
+                            
+                            for (const pattern of urlPatterns) {
+                                const match = hostname.match(pattern);
+                                if (match && match[1] && match[1].length > 2) {
+                                    const company = match[1].replace(/[-_]/g, ' ').trim();
+                                    if (!/www|jobs|careers|workday|greenhouse|lever/i.test(company)) {
+                                        return company.charAt(0).toUpperCase() + company.slice(1);
+                                    }
+                                }
+                            }
+                            return null;
+                        },
+
+                        () => {
+                            const metaSelectors = [
+                                'meta[property="og:site_name"]',
+                                'meta[name="application-name"]',
+                                'meta[name="author"]',
+                                'meta[property="og:author"]'
+                            ];
+                            
+                            for (const selector of metaSelectors) {
+                                const element = document.querySelector(selector);
+                                if (element?.content && element.content.trim()) {
+                                    const content = element.content.trim();
+                                    if (content.length > 2 && !/job|career|position/i.test(content)) {
+                                        return content;
+                                    }
+                                }
+                            }
+                            return null;
+                        },
+
+                        () => {
+                            const breadcrumbSelectors = [
+                                '.breadcrumb',
+                                '.breadcrumbs',
+                                '.nav',
+                                '.navigation',
+                                '[role="navigation"]'
+                            ];
+                            
+                            for (const selector of breadcrumbSelectors) {
+                                const element = document.querySelector(selector);
+                                if (element) {
+                                    const text = element.textContent;
+
+                                    const companyMatch = text.match(/([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/);
+                                    if (companyMatch && companyMatch[1] && companyMatch[1].length > 3) {
+                                        return companyMatch[1].trim();
+                                    }
+                                }
+                            }
+                            return null;
+                        },
+                        
+                        () => {
+                            const logoSelectors = [
+                                'img[alt*="logo"]',
+                                'img[alt*="company"]',
+                                'img[alt*="brand"]',
+                                '.logo img',
+                                '.company-logo img',
+                                '.brand img'
+                            ];
+                            
+                            for (const selector of logoSelectors) {
+                                const img = document.querySelector(selector);
+                                if (img && img.alt) {
+                                    const altText = img.alt.trim();
+                                    const companyMatch = altText.match(/([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/);
+                                    if (companyMatch && companyMatch[1] && companyMatch[1].length > 3) {
+                                        return companyMatch[1].trim();
+                                    }
+                                }
+                            }
+                            return null;
+                        },
+                        
+                        () => {
+                            const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+                            for (const script of scripts) {
+                                try {
+                                    const data = JSON.parse(script.textContent);
+                                    if (data.hiringOrganization && data.hiringOrganization.name) {
+                                        return data.hiringOrganization.name.trim();
+                                    }
+                                    if (data.organization && data.organization.name) {
+                                        return data.organization.name.trim();
+                                    }
+                                    if (data.employerName) {
+                                        return data.employerName.trim();
+                                    }
+                                } catch (e) {
+                                    continue;
+                                }
+                            }
+                            return null;
+                        },
+                        
+                        () => {
+                            const ogSiteName = document.querySelector('meta[property="og:site_name"]');
+                            if (ogSiteName?.content) {
+                                const content = ogSiteName.content.trim();
+                                if (content.length > 2 && !/job|career|position|apply|hiring/i.test(content)) {
+                                    return content;
+                                }
+                            }
+                            return null;
+                        }
+                    ];
+                    
+                    for (const strategy of strategies) {
+                        try {
+                            const company = strategy();
+                            if (company && company.length > 2 && company.length < 100) {
+                                return company;
+                            }
+                        } catch (e) {
+                            continue;
+                        }
+                    }
+                    
+                    return null;
+                }
+                
                 const meta = {
                     title: document.querySelector('meta[property="og:title"], meta[name="title"]')?.content || document.title,
                     url: location.href,
-                    company: document.querySelector('[data-company], [itemprop="hiringOrganization"], .company, .jobs-company, .posting-company')?.textContent?.trim() || '',
+                    company: findCompanyName() || '',
                     role: document.querySelector('h1, .posting-headline, .job-title, [data-testid="job-title"]')?.textContent?.trim() || '',
                     location: document.querySelector('[data-location], .location, [itemprop="jobLocation"]')?.textContent?.trim() || '',
                     pageAppliedDate: (() => {

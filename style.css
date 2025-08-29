@@ -18,3 +18,107 @@ a{ color:#93c5fd; }
 
 
 .container h1{ font-size:18px; }
+
+/* Popup-specific styles */
+body.popup {
+    width: 320px;
+    margin: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body.popup .container {
+    padding: 24px;
+    text-align: center;
+    background: transparent;
+    box-shadow: none;
+    margin: 0;
+    max-width: none;
+}
+
+body.popup h2 {
+    margin: 0 0 24px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+body.popup .btn {
+    display: inline-block;
+    padding: 14px 24px;
+    margin: 12px 0;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+}
+
+body.popup .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+body.popup .btn:hover::before {
+    left: 100%;
+}
+
+body.popup .btn-primary {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+body.popup .btn-primary:hover {
+    background: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    border-color: rgba(255,255,255,0.2);
+}
+
+body.popup .btn-dashboard {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+body.popup .btn-dashboard:hover {
+    background: linear-gradient(135deg, #047857 0%, #059669 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    border-color: rgba(255,255,255,0.2);
+}
+
+body.popup .btn-dashboard .icon {
+    font-size: 18px;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+}
+
+body.popup .btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+body.popup .btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+}

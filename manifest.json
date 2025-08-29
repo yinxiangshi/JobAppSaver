@@ -25,15 +25,6 @@
         "default_popup": "popup.html"
     },
     "options_page": "dashboard.html",
-    "commands": {
-        "save_job_shortcut": {
-            "suggested_key": {
-                "default": "Ctrl+Shift+S",
-                "mac": "Command+Shift+S"
-            },
-            "description": "Save current page as a job application"
-        }
-    },
     "content_scripts": [
         {
             "matches": ["<all_urls>"],

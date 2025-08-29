@@ -1,17 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Job Tracker</title>
-<link rel="stylesheet" href="style.css" />
+    <meta charset="utf-8">
+    <title>Job Application Tracker</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<div class="container">
-<h1>Job Tracker</h1>
-<p>Use the context menu, the floating button, or <kbd>Ctrl/Cmd+Shift+S</kbd> to save jobs. <a href="dashboard.html" target="_blank">Open Dashboard →</a></p>
-<button id="saveCurrent">Save Current Page</button>
-</div>
-<script type="module" src="popup.js"></script>
+<body class="popup">
+    <div class="container">
+        <h2>Job Application Tracker</h2>
+        <button id="saveCurrent" class="btn btn-primary">Save Current Page</button>
+        <a href="dashboard.html" target="_blank" class="btn btn-dashboard">
+            <span class="icon">📊</span>
+            View Dashboard
+        </a>
+    </div>
+    <script src="popup.js"></script>
 </body>
 </html>
