@@ -52,18 +52,6 @@ The extension uses 8 different strategies to identify company names:
 
 This multi-strategy approach ensures company names are detected even when they're displayed as images or logos.
 
-## Troubleshooting
-
-### Company Name Not Detected?
-1. The extension will try multiple detection strategies automatically
-2. Use the context menu or floating button as alternatives
-3. Check the troubleshooting guide for detailed solutions
-
-### Need Help?
-- Check the [Troubleshooting Guide](TROUBLESHOOTING.md)
-- Use the test.html file to verify functionality
-- Check browser console for error messages
-
 ## Supported Job Sites
 
 - Lever.co
@@ -72,35 +60,6 @@ This multi-strategy approach ensures company names are detected even when they'r
 - Ashbyhq.com
 - MyWorkdayJobs.com
 - General job posting sites
-
-## Development
-
-### Project Structure
-```
-├── manifest.json          # Extension configuration
-├── background.js          # Background service worker
-├── contentScript.js       # Content script for job detection
-├── popup.html/js         # Extension popup interface
-├── dashboard.html/js      # Job management dashboard
-├── style.css             # Styling
-├── icons/                # Extension icons
-├── test.html             # Test page for debugging
-└── TROUBLESHOOTING.md    # Troubleshooting guide
-```
-
-### Recent Improvements
-- **Enhanced Company Detection**: Added 8 different strategies for better company name identification
-- **Beautiful UI**: Modern, gradient-based design with smooth animations
-- **Image Logo Support**: Company names can now be extracted from image alt text
-- **Structured Data Support**: Added JSON-LD schema markup parsing
-- **Better Error Handling**: Improved error handling and user feedback
-- **Responsive Dashboard**: Beautiful, modern dashboard interface
-
-### Testing
-1. Open `test.html` in your browser
-2. Try all save methods (context menu, floating button, etc.)
-3. Verify company name detection works correctly
-4. Check that jobs appear in the dashboard
 
 ## Contributing
 
